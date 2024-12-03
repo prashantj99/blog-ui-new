@@ -6,7 +6,6 @@ import BlogFeedContext from '../context/BlogFeedContext';
 import { GET_BLOGS_URL } from '../commons/AppConstant'
 
 const BlogFeedProvider = ({ children }) => {
-  const PAGE_SIZE = 10;
   const axiosPrivate = useAxiosPrivate();
   const { auth } = useAuth();
 
@@ -19,7 +18,7 @@ const BlogFeedProvider = ({ children }) => {
   const fetchBlogs = useCallback(async () => {
     setLoading(true);
     try {
-      const url = `${feedType}?pageNumber=${page}&pageSize=${PAGE_SIZE}`;
+      const url = `${feedType}?pageNumber=${page}`;
       const response = await axiosPrivate.get(url, {
         params: {
           userId: auth.id,

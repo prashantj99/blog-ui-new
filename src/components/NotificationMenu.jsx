@@ -6,7 +6,8 @@ import {
     List,
     ListItem,
     ListItemText,
-    Menu
+    Menu,
+    Tooltip
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { BASE_URL } from '../commons/AppConstant';
@@ -59,7 +60,7 @@ export default function NotificationMenu() {
     // Mark notification as read
     const handleMarkAsRead = useCallback(async (notificationId) => {
         await axiosPrivate.post(`${BASE_URL}/notifications/${notificationId}/read`);
-        fetchNotifications(0); 
+        fetchNotifications(0);
         setUnreadCount(prevCount => prevCount - 1);
     }, [axiosPrivate, fetchNotifications]);
 
@@ -73,11 +74,13 @@ export default function NotificationMenu() {
 
     return (
         <>
-            <IconButton onClick={handleMenuOpen}>
-                <Badge badgeContent={unreadCount} color="error">
-                    <Notifications />
-                </Badge>
-            </IconButton>
+            <Tooltip title="Notification" arrow>
+                <IconButton onClick={handleMenuOpen}>
+                    <Badge badgeContent={unreadCount} color="error">
+                        <Notifications />
+                    </Badge>
+                </IconButton>
+            </Tooltip>
             <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}

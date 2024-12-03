@@ -1,5 +1,10 @@
-import { createContext} from 'react';
+import { createContext } from 'react';
 
-const BlogFeedContext = createContext({});
+const BlogFeedContext = createContext({
+  blogs: [],
+  hasMore: false,
+  loading: false,
+  changeFeedType: () => {},
+});
 
 export default BlogFeedContext;
