@@ -11,7 +11,7 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 
 const UserProfileCard = ({ user, followerCount, isFollowing, handleToggleFollow, children }) => {
     const [isHovered, setIsHovered] = useState(false);
-    
+
     const handleMouseEnter = () => {
         setIsHovered(true);
     };
@@ -31,10 +31,10 @@ const UserProfileCard = ({ user, followerCount, isFollowing, handleToggleFollow,
                 overlap="circular"
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
                 badgeContent={
-                    <SmallAvatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+                    <SmallAvatar alt="Travis Howard" src="/src/assets/user-svgrepo-com.svg" />
                 }
             >
-                <Avatar alt="Travis Howard" src="/static/images/avatar/2.jpg" />
+                <Avatar alt="Travis Howard" src="/src/assets/user-svgrepo-com.svg" />
             </Badge>
             {children}
 

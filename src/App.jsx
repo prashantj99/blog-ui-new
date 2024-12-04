@@ -18,14 +18,12 @@ import InternalServerError from "./pages/500.page.jsx";
 import UserBlogs from "./components/UserBlogs.jsx";
 import TopicPage from "./pages/topics.page.jsx";
 import ReadMorePage from "./pages/read-more.page.jsx";
-import ScrollToTop from "./components/ScrollToTop.jsx";
 import SearchResultPage from "./pages/search-result.page.jsx";
 import UserPublicProfilePage from "./pages/user-public-profile.page.jsx";
 
 const App = () => {
   return (
     <BrowserRouter>
-      <ScrollToTop />
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useParams } from 'react-router-dom';
 import ReadMoreContext from '../context/ReadMoreBlogContext';
-import useAxiosPrivate from '../hooks/useAxiosPrivate'; 
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import { useEffect, useState } from 'react';
 import { BASE_URL } from '../commons/AppConstant';
 
@@ -10,6 +10,8 @@ const ReadMoreProvider = ({ children }) => {
     const axiosPrivate = useAxiosPrivate();
     const [blog, setBlog] = useState({});
     const [currentBlogId, setCurrentBlogId] = useState(id);
+    const [isReadMode, setIsReadMode] = useState(false);
+
     //fetch current blog 
     useEffect(() => {
         const controller = new AbortController();
@@ -18,8 +20,8 @@ const ReadMoreProvider = ({ children }) => {
             try {
                 const response = await axiosPrivate.get(`/post/${currentBlogId}`, { signal });
                 const { postId, title, content, bannerUrl, draft, lastUpdated, description, category, tags, user } = response.data;
-                setBlog({...response.data});
-                
+                setBlog({ ...response.data });
+
                 setBlog({
                     id: postId,
                     title: title,
@@ -35,7 +37,7 @@ const ReadMoreProvider = ({ children }) => {
                     user: user,
                 });
                 console.log(blog);
-                
+
             } catch (error) {
                 if (error.name !== 'AbortError') {
                     console.log('Error fetching blog:', error);
@@ -52,8 +54,10 @@ const ReadMoreProvider = ({ children }) => {
     }, [id])
 
     return (
-        <ReadMoreContext.Provider value={{blog, setBlog, setCurrentBlogId}}>
-            {children}
+        <ReadMoreContext.Provider value={{ blog, setBlog, setCurrentBlogId, isReadMode, setIsReadMode }}>
+            <div style={{ backgroundColor: isReadMode ? '#F3E0C4' : 'white', color: isReadMode ? '#4E2C2D' : '#000', transition: 'all 0.3s ease' }}>
+                {children}
+            </div>
         </ReadMoreContext.Provider>
     )
 }
