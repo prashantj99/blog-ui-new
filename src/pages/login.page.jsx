@@ -119,7 +119,7 @@ const Login = () => {
             </StyledButton>
             <Grid container>
               <Grid item xs>
-                <StyledLink to="/reset_password" variant="body2">
+                <StyledLink to="/forgotpassword" variant="body2">
                   Forgot password?
                 </StyledLink>
               </Grid>

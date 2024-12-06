@@ -27,12 +27,12 @@ const App = () => {
       <Routes>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgotpassword" element={<ResetPasswordPage />} />
+        <Route path="/changepassword" element={<ChangePasswordPage />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
+        <Route path="/500" element={<InternalServerError />} />
         <Route path="/" element={<Layout />}>
           {/* Public routes */}
-          <Route path="forgotpassword" element={<ResetPasswordPage />} />
-          <Route path="changepassword" element={<ChangePasswordPage />} />
-          <Route path="unauthorized" element={<Unauthorized />} />
-          <Route path="500" element={<InternalServerError />} />
 
           {/* Private routes */}
           <Route element={<PersistentLogin />}>

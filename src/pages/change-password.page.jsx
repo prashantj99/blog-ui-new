@@ -1,54 +1,32 @@
-import { useNavigate } from 'react-router-dom';
-
 import {
-  Container,
   Avatar,
-  Button,
   CssBaseline,
   TextField,
-  Link,
   Typography,
   Stack,
   Box,
-  styled,
 } from '@mui/material';
+import StyledButton from '../ui/StyledButton';
+import Wrapper from '../ui/Wrapper';
+import FormWrapper from '../ui/FormWrapper';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 import axios from '../api/axios';
 import useAuth from '../hooks/useAuth';
 import { CHANGE_PASSWORD_URL } from '../commons/AppConstant';
 
-const Wrapper = styled(Box)(({theme}) => ({
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  height: "100vh",
-  backgroundColor: "#fff"
-}));
-
-const FormWrapper = styled("div")(({ theme }) => ({
-  marginTop: theme.spacing(8),
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center'
-}));
-
-const FormBody = styled("form")(({ theme }) => ({
-  width: '100%',
-  marginTop: theme.spacing(1)
-}));
-
 const ChangePasswordPage = () => {
-  const {auth, setAuth} = useAuth();
+  const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async(event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    
-    if(!sessionStorage.getItem('password_reset_token')){
-        navigate('/login');
+
+    if (!sessionStorage.getItem('password_reset_token')) {
+      navigate('/login');
     }
-    
+
     const formData = new FormData(event.currentTarget);
     const authDetails = {
       new_password: formData.get('new_password'),
@@ -59,84 +37,65 @@ const ChangePasswordPage = () => {
     const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
 
     if (!passwordRegex.test(authDetails.new_password)) {
-      return toast.error("Password should be 6 to 20 characters long with a numeric, 1 lowercase and 1 uppercase letters")
+      return toast.error(
+        'Password must be 8-20 characters, including uppercase, lowercase, and a digit.'
+      );
     }
 
-    if (authDetails.new_password != authDetails.repeat_password) {
-      return toast.error("password mismatch!!!")
+    if (authDetails.new_password !== authDetails.repeat_password) {
+      return toast.error("Passwords don't match.");
     }
 
-    //make server call to change password
-    sessionStorage.removeItem('password_reset_token')
-    try{
-        await axios.post(CHANGE_PASSWORD_URL, authDetails);
-        setAuth((prev) =>{
-          return {...prev, forgotPasswordToken: null};
-        })
-        navigate('/login')
-    }catch(err){
-      console.log(err);
+    sessionStorage.removeItem('password_reset_token');
+
+    try {
+      await axios.post(CHANGE_PASSWORD_URL, authDetails);
+      setAuth((prev) => ({ ...prev, forgotPasswordToken: null }));
+      navigate('/login');
+    } catch (err) {
+      toast.error('Failed to update the password.');
     }
-  }
+  };
+
   return (
     <Wrapper>
       <ToastContainer />
-      <Container component="main" maxWidth="xs">
+      <FormWrapper maxWidth="xs">
         <CssBaseline />
-        <FormWrapper>
-          <Stack alignItems="center" spacing={2}>
-            <Avatar>
-              <LockOutlinedIcon />
-            </Avatar>
-            <Typography component="h1" variant="h5">Change Password</Typography>
-          </Stack>
-          <FormBody noValidate onSubmit={handleSubmit}>
-            {/* Password input field */}
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="new_password"
-              label="New Password"
-              type="password"
-              id="password1"
-              autoComplete="current-password"
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="repeat_password"
-              label="Confirm Password"
-              type="password"
-              id="password2"
-              autoComplete="current-password"
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              sx={{ margin: '3px 0px 2px' }}
-            >
-              sumbit
-            </Button>
-          </FormBody>
-        </FormWrapper>
-        {/* Footer */}
-        <Box mt={8}>
-          <Typography variant="body2" color="textSecondary" align="center">
-            {'Copyright © '}
-            <Link color="inherit" href="#">
-              .blog
-            </Link>{' '}
-            {new Date().getFullYear()}
-            {'.'}
-          </Typography>
+        <Stack alignItems="center" spacing={2}>
+          <Avatar sx={{ bgcolor: 'primary.main' }}>
+            <LockOutlinedIcon />
+          </Avatar>
+          <Typography variant="h5">Change Password</Typography>
+        </Stack>
+        <Box component="form" noValidate onSubmit={handleSubmit}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="new_password"
+            label="New Password"
+            type="password"
+            id="password1"
+            autoFocus
+            InputProps={{ style: { borderRadius: '8px' } }}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="repeat_password"
+            label="Confirm Password"
+            type="password"
+            id="password2"
+          />
+          <StyledButton type="submit" fullWidth variant="contained">
+            Submit
+          </StyledButton>
         </Box>
-      </Container>
+      </FormWrapper>
     </Wrapper>
   );
 };

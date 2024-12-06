@@ -1,5 +1,5 @@
 // security
-export const RECAPTCHA_SITE_KEY = `${import.meta.env.RECAPTCHA_KEY_VAL}`;
+export const RECAPTCHA_SITE_KEY = `${import.meta.env.VITE_RECAPTCHA_KEY_VAL}`;
 export const REACT_APP_GOOGLE_CLIENT_ID = `${import.meta.env.GOOGLE_CLIENT_ID}`;
 
 export const EMAIL_VERIFY_FORM = 'EMAIL_VERIFY_FORM';
