@@ -5,6 +5,7 @@ import formatRelativeTime from '../utils/date_formatter'
 import useAuth from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { BASE_URL } from '../commons/AppConstant';
+import getActivityCounts from '../utils/BlogActivityCounts';
 
 const ListBlogs = ({ blogs }) => {
     const { auth } = useAuth();
@@ -12,12 +13,7 @@ const ListBlogs = ({ blogs }) => {
     return (
         <Grid container spacing={2}>
             {blogs && blogs.map((blog, index) => {
-
-                const likes = blog.activities.filter(activity => activity.activityType === 'LIKE').length;
-                const bookmarks = blog.activities.filter(activity => activity.activityType === 'BOOKMARK').length;
-                const liked = blog.activities.some(activity => activity.activityType === 'LIKE' && activity.userId === auth.id);
-                const bookmarked = blog.activities.some(activity => activity.activityType === 'BOOKMARK' && activity.userId === auth.id);
-
+                const { likes, bookmarks, liked, bookmarked } = getActivityCounts(blog?.activities, auth?.id);
                 return <Grid item xs={12} key={index}>
                     <Card sx={{ display: 'flex', mb: 2, cursor: 'pointer' }} onClick={() => { navigate(`/read-more/${blog?.postId}`); }}>
                         <Box sx={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
