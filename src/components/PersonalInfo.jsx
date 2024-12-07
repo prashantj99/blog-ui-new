@@ -15,14 +15,14 @@ import { toast } from 'react-toastify';
 
 const PersonalInfo = () => {
     const {
-        user:{name, email, about, accounts, }, 
+        user: { name, email, about, accounts, },
         user,
-        setUser, 
+        setUser,
     } = useAccount();
     const axiosPrivate = useAxiosPrivate();
-    const {auth} = useAuth();
+    const { auth } = useAuth();
 
-    const [socialLinks, setSocialLinks] = useState(accounts || [{accountId: '', platform: '', link:''}]);
+    const [socialLinks, setSocialLinks] = useState(accounts || [{ accountId: '', platform: '', link: '' }]);
     const [isEditing, setIsEditing] = useState(false);
 
     // Handle change for user fields
@@ -56,7 +56,7 @@ const PersonalInfo = () => {
     const toggleEditMode = () => {
         setIsEditing(!isEditing);
     };
-    
+
 
     // Fetch user details on load
     useEffect(() => {
@@ -87,7 +87,7 @@ const PersonalInfo = () => {
 
     //edit profile request
     const updateUser = async () => {
-        if(!email || email != auth?.email){
+        if (!email || email != auth?.email) {
             return toast.error('email cannot be updated!!!');
         }
         try {
@@ -100,7 +100,7 @@ const PersonalInfo = () => {
             console.error(err);
         }
     };
-    
+
     return (
         <Box sx={{ flexGrow: 1, padding: 3, m: 2 }}>
             <Stack direction="row" spacing={4}>

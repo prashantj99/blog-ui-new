@@ -1,66 +1,103 @@
-import Box from '@mui/material/Box/Box.js';
-import { AppBar, Button, Toolbar, Typography, styled} from '@mui/material';
-import { ToastContainer} from 'react-toastify';
+import { AppBar, Box, Button, Toolbar, Typography, styled } from '@mui/material';
+import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import useBlog from '../hooks/useBlog.jsx';
 import PublishedWithChangesIcon from '@mui/icons-material/PublishedWithChanges';
 import ScheduleIcon from '@mui/icons-material/Schedule';
+import formatRelativeTime from '../utils/date_formatter.js';
 
-const CustomIconButton = styled(Button)({
-    color: 'black',
-    backgroundColor: 'white',
+const CustomIconButton = styled(Button)(({ theme }) => ({
+    color: theme.palette.text.primary,
+    backgroundColor: theme.palette.background.paper,
+    textTransform: 'none',
     '&:hover': {
-        backgroundColor: '#f0f0f0',
+        backgroundColor: theme.palette.action.hover,
     },
-    borderRadius:10,
-});
+    borderRadius: theme.shape.borderRadius,
+    padding: theme.spacing(1, 2),
+    boxShadow: theme.shadows[1],
+}));
 
 const Icons = styled(Box)({
-    minWidth:'200px',
     display: 'flex',
-    justifyContent: 'space-around',
+    gap: '16px',
 });
 
 const StyledToolbar = styled(Toolbar)({
-    display: { xs: 'none', sm: 'flex' },
+    display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: '0 16px',
 });
 
 export default function EditorNavBar() {
-    
     const navigate = useNavigate();
-    const { setBlogState, blogState:{title}, saveDraft, publish, savingState} = useBlog();
-    const { drafting, publishing} = savingState;
+    const { setBlogState, blogState: { title }, saveDraft, publish, savingState } = useBlog();
+    const { drafting, publishing } = savingState;
+
+    const [lastSaved, setLastSaved] = useState(null);
+
+    const handleSaveDraft = () => {
+        setBlogState((prev) => ({ ...prev, draft: true }));
+        saveDraft();
+        setLastSaved(new Date().toISOString()); // Update last saved time
+    };
+
+    const handlePublish = () => {
+        setBlogState((prev) => ({ ...prev, draft: false }));
+        publish();
+    };
+
     return (
-        <AppBar position="sticky" sx={{ backgroundColor: 'white', boxShadow: 'none', color: 'black' }}>
+        <AppBar position="sticky" sx={{ backgroundColor: 'white', boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)', color: 'black' }}>
             <ToastContainer />
             <StyledToolbar>
-                <Typography variant='h6' sx={{ display: { xs: 'none', sm: 'block' } }}>
-                    <img
-                        src="/src/assets/logo.png"
-                        alt="Logo"
-                        style={{ height: '20px', marginRight: '20px', cursor: 'pointer' }}
-                        onClick={() => navigate('/feed')}
-                    />
-                </Typography>
-                <Typography variant='h6' sx={{ display: { xs: 'none', sm: 'block' } }}>
-                    {title || 'Untitled Blog'}
-                </Typography>
+                {/* Logo */}
+                <Box
+                    component="img"
+                    src="/src/assets/logo.png"
+                    alt="Logo"
+                    sx={{
+                        height: 24,
+                        cursor: 'pointer',
+                    }}
+                    onClick={() => navigate('/feed')}
+                />
+
+                {/* Title */}
+                <Box sx={{ flex: 1, textAlign: 'center' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                        {title || 'Untitled Blog'}
+                    </Typography>
+                    {lastSaved && (
+                        <Typography variant="body2" color="text.secondary" sx={{ fontSize: 12 }}>
+                            Last saved: {formatRelativeTime(lastSaved)}
+                        </Typography>
+                    )}
+                </Box>
+
+                {/* Action Buttons */}
                 <Icons>
-                    <CustomIconButton edge="start" startIcon={<ScheduleIcon />} color="inherit" aria-label="save" onClick={()=>{
-                        setBlogState((prev) => {
-                            return {...prev, draft: true};
-                        })
-                        saveDraft();
-                    }} disabled={drafting || publishing}>
-                        {drafting ? 'saving...' : 'save'}
+                    <CustomIconButton
+                        startIcon={<ScheduleIcon />}
+                        onClick={handleSaveDraft}
+                        disabled={drafting || publishing}
+                    >
+                        {drafting ? 'Saving...' : 'Save'}
                     </CustomIconButton>
-                    <Button variant="contained" color={'primary'} startIcon={<PublishedWithChangesIcon />} style={{ marginLeft: 'auto', borderRadius:10 }} onClick={()=> {
-                        setBlogState((prev) => {
-                            return {...prev, draft: false};
-                        })
-                        publish();
-                    }} disabled={drafting || publishing}>
+                    <Button
+                        variant="contained"
+                        startIcon={<PublishedWithChangesIcon />}
+                        onClick={handlePublish}
+                        disabled={drafting || publishing}
+                        sx={{
+                            textTransform: 'none',
+                            borderRadius: 2,
+                            padding: '8px 24px',
+                            boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
+                        }}
+                    >
                         {publishing ? 'Publishing...' : 'Publish'}
                     </Button>
                 </Icons>

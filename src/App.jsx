@@ -53,8 +53,7 @@ const App = () => {
 
               <Route path="profile" element={<ProfilePage />}>
                 <Route path="info" element={<PersonalInfo />} />
-                <Route path="published" element={<UserBlogs />} />
-                <Route path="drafts" element={<UserBlogs />} />
+                <Route path="blogs/:status" element={<UserBlogs />} />
               </Route>
 
               <Route path="/search" element={<SearchResultPage />} />

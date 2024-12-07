@@ -46,7 +46,7 @@ function EditorPage() {
                     const data = await editor.save();
                     setBlogState((prev) => ({
                         ...prev,
-                        content: data.blocks,
+                        content: data?.blocks,
                     }));
                 } catch (error) {
                     console.error('Error saving content:', error);
@@ -150,15 +150,38 @@ function EditorPage() {
         await handleUpload();
     };
 
+    function validateDraft({ title, categoryId, content, banner }) {
+        if (title.length < 3) return 'Title must be at least 3 characters long.';
+        if (!categoryId) return 'Category is required.';
+        if (!content.length) return 'Content cannot be empty.';
+        if (!banner) return 'A banner image is required.';
+        return null; // No validation errors
+    }
+
     const saveDraft = useCallback(async () => {
-        if (title.length < 3 || !categoryId || !content.length || !banner) {
-            console.log('Error in draft saving...');
+        const errorMessage = validateDraft({ title, categoryId, content, banner });
+        if (errorMessage) {
+            toast.error(`Invalid Draft! ${errorMessage}`);
             return;
         }
 
-        setSavingState((prev) => ({ ...prev, drafting: true }));
-        await handleUpload();
-    }, [title.length, categoryId, content.length, banner, handleUpload]);
+        try {
+            setSavingState((prev) => ({ ...prev, drafting: true }));
+
+            // Await upload process
+            await handleUpload();
+
+            // Notify user on success
+            toast.success('Draft saved successfully!');
+        } catch (error) {
+            console.error('Error saving draft:', error);
+            toast.error('Failed to save draft. Please try again.');
+        } finally {
+            // Reset saving state
+            setSavingState((prev) => ({ ...prev, drafting: false }));
+        }
+    }, [title, categoryId, content, banner, handleUpload]);
+
 
     useEffect(() => {
         const saveBlog = async () => {
@@ -213,7 +236,7 @@ function EditorPage() {
                 }
 
                 const response = await axiosPrivate.get(`/post/${BLOG_ID}`, { signal });
-                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryDT:{categoryId}, tags} = response.data;
+                const { postId, title, content, bannerUrl, draft, lastUpdated, description, categoryDT: { categoryId }, tags } = response.data;
 
                 initializeTextEditor({ blocks: JSON.parse(content) });
 
@@ -246,7 +269,7 @@ function EditorPage() {
     }, []);
 
     return (
-        <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, saveDraft, publish, savingState}}>
+        <BlogContext.Provider value={{ blogState, setBlogState, textEditor, setTextEditor, saveDraft, publish, savingState }}>
             <EditorNavBar />
             <CreateBlogPage />
         </BlogContext.Provider>
