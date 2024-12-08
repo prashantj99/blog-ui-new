@@ -7,33 +7,32 @@ import { Outlet, useNavigate } from 'react-router-dom';
 
 
 const CategoryProvider = () => {
-    const [categories, setCategories] = useState(null);
-    const [loading, setLoading] = useState(true);
-    const navigate = useNavigate();
+  const [categories, setCategories] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-    useEffect(() => {
-        const fetchCategories = async () => { 
-          try {
-                const response = await axios.get(ALL_CATEGORY_URL);
-                // console.table(response.data)
-                setCategories(response.data);
-            } catch (err) {
-                navigate('/500');
-            }finally{   
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(ALL_CATEGORY_URL);
+        setCategories(response.data);
+      } catch (err) {
+        navigate('/500');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        !categories ? fetchCategories() : setLoading(false);
-  }, [categories]); 
+    !categories ? fetchCategories() : setLoading(false);
+  }, [categories]);
 
   if (loading) {
-    return <LoaderWithLabel />; 
+    return <LoaderWithLabel />;
   }
 
   return (
-    <BlogCategoryContext.Provider value={{categories, setCategories}}>
-        <Outlet/>
+    <BlogCategoryContext.Provider value={{ categories, setCategories }}>
+      <Outlet />
     </BlogCategoryContext.Provider>
   )
 }

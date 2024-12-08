@@ -3,7 +3,6 @@ import BlogList from '../components/BlogList';
 import BlogPost from '../components/BlogPost';
 import ReadMoreProvider from '../Providers/ReadMoreProvider';
 import ScrollToTopButton from '../components/ScrollToTopButton';
-import { useState } from 'react';
 
 const ReadMorePage = () => {
   return (

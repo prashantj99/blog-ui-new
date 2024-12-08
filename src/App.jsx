@@ -25,6 +25,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public routes */}
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/forgotpassword" element={<ResetPasswordPage />} />
@@ -32,20 +33,11 @@ const App = () => {
         <Route path="/unauthorized" element={<Unauthorized />} />
         <Route path="/500" element={<InternalServerError />} />
         <Route path="/" element={<Layout />}>
-          {/* Public routes */}
-
           {/* Private routes */}
           <Route element={<PersistentLogin />}>
             <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-
-              <Route element={<CategoryProvider />}>
-                <Route exact path="/" element={<Home />} />
-                <Route path="feed" element={<Home />} />
-                <Route path="liked" element={<Home />} />
-                <Route path="bookmarked" element={<Home />} />
-                <Route path="trending" element={<Home />} />
-                <Route path="subscribed-posts" element={<Home />} />
-              </Route>
+              <Route exact path="/" element={<Home />} />
+              <Route path=":homeRoutes" element={<Home />} />
 
               <Route path="topic/:id" element={<TopicPage />} />
               <Route path="read-more/:id" element={<ReadMorePage />} />
