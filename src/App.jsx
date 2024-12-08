@@ -11,7 +11,6 @@ import Layout from "./components/Layout.jsx";
 import Unauthorized from './pages/Unauthorized.page.jsx'
 import { ROLES } from './commons/AppConstant.jsx'
 import PersistentLogin from './components/PersistentLogin.jsx'
-import CategoryProvider from './Providers/CategoryProvider.jsx'
 import ProfilePage from './pages/profile.page.jsx'
 import PersonalInfo from "./components/PersonalInfo.jsx";
 import InternalServerError from "./pages/500.page.jsx";
@@ -36,8 +35,8 @@ const App = () => {
           {/* Private routes */}
           <Route element={<PersistentLogin />}>
             <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-              <Route exact path="/" element={<Home />} />
-              <Route path=":homeRoutes" element={<Home />} />
+              <Route exact path="/feed" element={<Home />} />
+              <Route path="feed/:feedType" element={<Home />} />
 
               <Route path="topic/:id" element={<TopicPage />} />
               <Route path="read-more/:id" element={<ReadMorePage />} />
@@ -50,20 +49,15 @@ const App = () => {
 
               <Route path="/search" element={<SearchResultPage />} />
               <Route path="public/profile/:userId" element={<UserPublicProfilePage />} />
+
             </Route>
           </Route>
         </Route>
-
-        {/* Editor route */}
         <Route element={<PersistentLogin />}>
           <Route element={<PrivateRouteWrapper allowedRoles={[ROLES.User, ROLES.Admin]} />}>
-            <Route element={<CategoryProvider />}>
-              <Route path="/editor" element={<EditorPage />} />
-            </Route>
+            <Route path="/editor" element={<EditorPage />} />
           </Route>
         </Route>
-
-        {/* Catch-all route */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

@@ -1,5 +1,6 @@
-import { useContext } from 'react';
-import { BlogContext } from '../pages/editor.page';
+import { createContext, useContext } from 'react';
+
+export const BlogContext = createContext({});
 
 const useBlog = () => useContext(BlogContext);
 

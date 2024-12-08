@@ -1,4 +1,4 @@
-import { createContext, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import EditorNavBar from '../components/EditorNavBar';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
 import useUploadFromFileUrl from '../hooks/useUploadFromFileUrl.js';
@@ -10,8 +10,7 @@ import EditorJS from '@editorjs/editorjs';
 import { tools } from '../components/tools';
 import InternalServerError from '../pages/500.page.jsx';
 import { useNavigate } from 'react-router-dom';
-
-export const BlogContext = createContext({});
+import {BlogContext} from '../hooks/useBlog'
 
 function EditorPage() {
     const axiosPrivate = useAxiosPrivate();

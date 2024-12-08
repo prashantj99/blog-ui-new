@@ -6,51 +6,46 @@ import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import BookmarksIcon from "@mui/icons-material/Bookmarks";
 import PersonIcon from "@mui/icons-material/Person";
+import useAuth from "../hooks/useAuth";
 
-export const navigationItems = (auth, changeFeedType) => [
+export const navigationItems = () => [
     {
         label: "Trending",
         icon: <WhatshotIcon />,
         color: "error.main", // Red color for "Trending"
-        to: "/trending",
-        onClick: () => changeFeedType("/post/trending"),
+        to: "/feed/tending",
     },
     {
         label: "Following",
         icon: <SubscriptionsIcon />,
         color: "warning.main", // Yellow for "Following"
-        to: `/subscribed-posts`,
-        onClick: () => changeFeedType(`user/${auth?.id}/subscribed-posts`),
+        to: `/feed/following`,
     },
     {
         label: "Liked",
         icon: <FavoriteBorderIcon />,
         color: "secondary.main", // Purple for "Liked"
-        to: "/liked",
-        onClick: () => changeFeedType("/activity/liked"),
+        to: "/feed/liked",
     },
     {
         label: "Saved Blogs",
         icon: <BookmarksIcon />,
         color: "info.main", // Blue for "Saved Blogs"
-        to: "/bookmarked",
-        onClick: () => changeFeedType("/activity/bookmarked"),
+        to: "/feed/bookmarked",
     },
     {
         label: "Profile",
         icon: <PersonIcon />,
         color: "success.main", // Green for "Profile"
         to: "/profile/info",
-        onClick: () => { },
     },
 ];
 
-export const Navigation = ({ auth, changeFeedType }) => {
-    const location = useLocation(); // Hook to get the current route
-
+export const Navigation = () => {
+    const location = useLocation();
     return (
         <>
-            {navigationItems(auth, changeFeedType).map((item, index) => {
+            {navigationItems().map((item, index) => {
                 const isActive = location.pathname === item.to; // Check if the route is active
 
                 return (
@@ -58,7 +53,6 @@ export const Navigation = ({ auth, changeFeedType }) => {
                         key={index}
                         component={Link}
                         to={item.to}
-                        onClick={item.onClick}
                         sx={{
                             "&:hover": {
                                 backgroundColor: "rgba(0, 123, 255, 0.1)",

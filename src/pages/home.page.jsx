@@ -9,10 +9,8 @@ const Home = () => {
     <Box>
       <CssBaseline />
       <Stack spacing={2} justifyContent='space-between' direction='row'>
-        <BlogFeedProvider>
-          <Sidebar />
-          <Feed />
-        </BlogFeedProvider>
+        <Sidebar />
+        <Feed />
         <Rightbar />
       </Stack>
     </Box>
