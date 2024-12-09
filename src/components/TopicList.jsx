@@ -26,12 +26,12 @@ const TopicsList = () => {
     const axiosPrivate = useAxiosPrivate();
 
     const handleFollowClick = async (category) => {
-        const isFollowing = category.subscribers.includes(auth.id);
+        const isFollowing = category?.subscribers?.includes(auth.id);
 
         try {
             await axiosPrivate.post(SUBSCRIBE_TOPIC_URL, {
                 userId: auth.id,
-                categoryId: category.categoryId,
+                categoryId: category?.categoryId,
             });
 
             setCategories((prevCategories) =>

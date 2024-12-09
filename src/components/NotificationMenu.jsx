@@ -7,12 +7,14 @@ import {
     ListItem,
     ListItemText,
     Menu,
-    Tooltip
+    Skeleton,
+    Tooltip,
+    Typography,
 } from '@mui/material';
 import { useCallback, useEffect, useState } from 'react';
 import { BASE_URL } from '../commons/AppConstant';
 import useAxiosPrivate from '../hooks/useAxiosPrivate';
-import formatRelativeTime from './../utils/date_formatter'
+import formatRelativeTime from './../utils/date_formatter';
 
 export default function NotificationMenu() {
     const [anchorEl, setAnchorEl] = useState(null);
@@ -23,14 +25,12 @@ export default function NotificationMenu() {
     const [loading, setLoading] = useState(false);
     const axiosPrivate = useAxiosPrivate();
 
-    // Fetch notifications from API
     const fetchNotifications = useCallback(async (page) => {
         setLoading(true);
         try {
             const response = await axiosPrivate.get(`${BASE_URL}/notifications?pageNumber=${page}&pageSize=10`);
-            console.log(response.data);
             const { notifications: newNotifications, isLastPage: lastPage } = response.data;
-            setNotifications(prev => page === 0 ? newNotifications : [...prev, ...newNotifications]);
+            setNotifications(prev => (page === 0 ? newNotifications : [...prev, ...newNotifications]));
             setIsLastPage(lastPage);
             if (page === 0) {
                 setUnreadCount(newNotifications.filter(notif => !notif.isRead).length);
@@ -42,29 +42,24 @@ export default function NotificationMenu() {
         }
     }, [axiosPrivate]);
 
-    // Fetch initial notifications
     useEffect(() => {
         fetchNotifications(pageNumber);
-    }, [pageNumber]);
+    }, [pageNumber, fetchNotifications]);
 
-    // Open menu
     const handleMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
     };
 
-    // Close menu
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
-    // Mark notification as read
     const handleMarkAsRead = useCallback(async (notificationId) => {
         await axiosPrivate.post(`${BASE_URL}/notifications/${notificationId}/read`);
         fetchNotifications(0);
         setUnreadCount(prevCount => prevCount - 1);
     }, [axiosPrivate, fetchNotifications]);
 
-    // Load more notifications
     const loadMoreNotifications = useCallback(() => {
         if (!isLastPage && !loading) {
             fetchNotifications(pageNumber + 1);
@@ -74,7 +69,7 @@ export default function NotificationMenu() {
 
     return (
         <>
-            <Tooltip title="Notification" arrow>
+            <Tooltip title="Notifications" arrow>
                 <IconButton onClick={handleMenuOpen}>
                     <Badge badgeContent={unreadCount} color="error">
                         <Notifications />
@@ -85,33 +80,68 @@ export default function NotificationMenu() {
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                MenuListProps={{
-                    style: { width: 350, maxHeight: 500 },
+                PaperProps={{
+                    sx: {
+                        width: 360,
+                        maxHeight: 500,
+                        overflow: 'auto',
+                        boxShadow: 3,
+                        borderRadius: 2,
+                    },
                 }}
             >
-                {notifications.length === 0 && (
-                    <ListItemText primary="No new notifications" style={{ padding: 16 }} />
+                {loading && notifications.length === 0 ? (
+                    Array.from({ length: 5 }).map((_, index) => (
+                        <Skeleton key={index} variant="rectangular" height={60} sx={{ margin: 1, borderRadius: 1 }} />
+                    ))
+                ) : (
+                    <List>
+                        {notifications.length === 0 && (
+                            <Typography
+                                variant="body1"
+                                color="textSecondary"
+                                textAlign="center"
+                                sx={{ padding: 2 }}
+                            >
+                                No new notifications
+                            </Typography>
+                        )}
+                        {notifications.map(notification => (
+                            <ListItem
+                                key={notification.id}
+                                button
+                                onClick={() => handleMarkAsRead(notification.id)}
+                                sx={{
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+                                    borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
+                                }}
+                            >
+                                <ListItemText
+                                    primary={notification.message}
+                                    secondary={formatRelativeTime(notification.createdAt)}
+                                    primaryTypographyProps={{ fontWeight: notification.isRead ? 'normal' : 'bold' }}
+                                />
+                            </ListItem>
+                        ))}
+                        {!isLastPage && (
+                            <ListItem
+                                onClick={loadMoreNotifications}
+                                sx={{
+                                    justifyContent: 'center',
+                                    color: 'primary.main',
+                                    '&:hover': { backgroundColor: 'rgba(0, 0, 0, 0.04)' },
+                                }}
+                            >
+                                <Typography variant="body2">Load more</Typography>
+                            </ListItem>
+                        )}
+                        {loading && (
+                            <ListItem sx={{ justifyContent: 'center' }}>
+                                <CircularProgress size={24} />
+                            </ListItem>
+                        )}
+                    </List>
                 )}
-                <List>
-                    {notifications.map(notification => (
-                        <ListItem key={notification.id} onClick={() => handleMarkAsRead(notification.id)} button>
-                            <ListItemText primary={notification.message} secondary={formatRelativeTime(notification.createdAt)} />
-                        </ListItem>
-                    ))}
-                    {loading && (
-                        <ListItemText
-                            primary={<CircularProgress size={20} />}
-                            style={{ textAlign: 'center', padding: 16 }}
-                        />
-                    )}
-                    {!isLastPage && (
-                        <ListItemText
-                            primary="Load more"
-                            style={{ textAlign: 'center', padding: 16, cursor: 'pointer' }}
-                            onClick={loadMoreNotifications}
-                        />
-                    )}
-                </List>
             </Menu>
         </>
     );

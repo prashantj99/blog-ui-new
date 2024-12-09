@@ -46,6 +46,13 @@ export default function CustomSearchBar() {
         navigate(`/search?type=${searchType}&keyword=${encodeURIComponent(suggestion)}`);
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && keyword.trim()) {
+            navigate(`/search?type=${searchType}&keyword=${encodeURIComponent(keyword)}`);
+            setSuggestions([]);
+        }
+    };
+
     return (
         <Box sx={{ position: 'relative', width: 400 }}>
             <Paper
@@ -77,9 +84,19 @@ export default function CustomSearchBar() {
                     placeholder={`Search ${searchType}s...`}
                     value={keyword}
                     onChange={handleKeywordChange}
+                    onKeyDown={handleKeyDown}
                     autoFocus
                 />
-                <IconButton sx={{ p: '10px' }} aria-label="search">
+                <IconButton
+                    sx={{ p: '10px' }}
+                    aria-label="search"
+                    onClick={() => {
+                        if (keyword.trim()) {
+                            navigate(`/search?type=${searchType}&keyword=${encodeURIComponent(keyword)}`);
+                            setSuggestions([]);
+                        }
+                    }}
+                >
                     <SearchIcon />
                 </IconButton>
             </Paper>
